@@ -1,5 +1,7 @@
 /* Avoid reading non-grounded pins */
-#define SLAVE_BUTTON_COUNT 7
+#define SLAVE_BUTTON_COUNT 12
+/* Regular Serial may be taken by USB communication. */
+#define SLAVE_SERIAL() Serial
 
 /* Digital pin numbers to read from */
 int _pins[] = {2, 3, 4, 5, 6, 7, 8, 9, 10, 14, 15, 16};
@@ -9,7 +11,7 @@ int _current_value = 0;
 
 void setup() {
   /* Slave writes serial to master. */
-  Serial.begin(9600);
+  SLAVE_SERIAL().begin(9600);
   for (int i = 0; i < SLAVE_BUTTON_COUNT; i++) {
     pinMode(_pins[i], INPUT);
   }
@@ -37,6 +39,6 @@ void loop() {
   }
   /* If a value has changed, write bit values to master. */
   if (hasChanged)
-    Serial.write((char *)(&_current_value), sizeof(_current_value));
+    SLAVE_SERIAL().write((char *)(&_current_value), sizeof(_current_value));
   delay(50);
 }
